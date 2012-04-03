@@ -1,0 +1,5 @@
+# Ignore corpus
+*.xml
+
+# Ignore cache
+__pycache__/*
