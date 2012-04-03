@@ -43,6 +43,18 @@ def is_sel(node, query):
 def get_sens(filename):
     return lxml.etree.parse(filename).findall('Sentence')
 
+def get_sen_text(node):
+    it = node.itertext()
+    ret = ''
+    try:
+        while True:
+            s = next(it).replace('\n', '').replace('$', '').strip()
+            if s =='': continue
+            ret = ret + s + ' '
+    except StopIteration:
+        pass
+    return ret
+
 def main(argv):
     if len(argv) != 3:
         print('Usage:\nre.py filename query')

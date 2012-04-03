@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Sun Apr  1 19:27:53 2012
+# Created: Tue Apr  3 11:08:58 2012
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -24,16 +24,41 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.verticalLayout = QtGui.QVBoxLayout()
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         self.lineEdit = QtGui.QLineEdit(self.centralwidget)
         self.lineEdit.setObjectName(_fromUtf8("lineEdit"))
-        self.verticalLayout.addWidget(self.lineEdit)
-        self.tableWidget = QtGui.QTableWidget(self.centralwidget)
-        self.tableWidget.setObjectName(_fromUtf8("tableWidget"))
-        self.tableWidget.setColumnCount(0)
-        self.tableWidget.setRowCount(0)
-        self.tableWidget.horizontalHeader().setStretchLastSection(True)
-        self.tableWidget.verticalHeader().setStretchLastSection(True)
-        self.verticalLayout.addWidget(self.tableWidget)
+        self.horizontalLayout_2.addWidget(self.lineEdit)
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
+        self.rbtn_eng = QtGui.QRadioButton(self.centralwidget)
+        self.rbtn_eng.setChecked(True)
+        self.rbtn_eng.setObjectName(_fromUtf8("rbtn_eng"))
+        self.buttonGroup = QtGui.QButtonGroup(MainWindow)
+        self.buttonGroup.setObjectName(_fromUtf8("buttonGroup"))
+        self.buttonGroup.addButton(self.rbtn_eng)
+        self.horizontalLayout.addWidget(self.rbtn_eng)
+        self.rbtn_chn = QtGui.QRadioButton(self.centralwidget)
+        self.rbtn_chn.setObjectName(_fromUtf8("rbtn_chn"))
+        self.buttonGroup.addButton(self.rbtn_chn)
+        self.horizontalLayout.addWidget(self.rbtn_chn)
+        self.horizontalLayout_2.addLayout(self.horizontalLayout)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
+        self.horizontalLayout_3 = QtGui.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
+        self.tw_eng = QtGui.QTableWidget(self.centralwidget)
+        self.tw_eng.setObjectName(_fromUtf8("tw_eng"))
+        self.tw_eng.setColumnCount(0)
+        self.tw_eng.setRowCount(0)
+        self.tw_eng.horizontalHeader().setStretchLastSection(True)
+        self.tw_eng.verticalHeader().setStretchLastSection(True)
+        self.horizontalLayout_3.addWidget(self.tw_eng)
+        self.tw_chn = QtGui.QTableWidget(self.centralwidget)
+        self.tw_chn.setObjectName(_fromUtf8("tw_chn"))
+        self.tw_chn.setColumnCount(0)
+        self.tw_chn.setRowCount(0)
+        self.horizontalLayout_3.addWidget(self.tw_chn)
+        self.verticalLayout.addLayout(self.horizontalLayout_3)
         self.progressBar = QtGui.QProgressBar(self.centralwidget)
         self.progressBar.setProperty("value", 100)
         self.progressBar.setObjectName(_fromUtf8("progressBar"))
@@ -100,6 +125,8 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "ReGui", None, QtGui.QApplication.UnicodeUTF8))
+        self.rbtn_eng.setText(QtGui.QApplication.translate("MainWindow", "English", None, QtGui.QApplication.UnicodeUTF8))
+        self.rbtn_chn.setText(QtGui.QApplication.translate("MainWindow", "Chinese", None, QtGui.QApplication.UnicodeUTF8))
         self.menu_File.setTitle(QtGui.QApplication.translate("MainWindow", "&File", None, QtGui.QApplication.UnicodeUTF8))
         self.menu_About.setTitle(QtGui.QApplication.translate("MainWindow", "About", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBar.setWindowTitle(QtGui.QApplication.translate("MainWindow", "toolBar", None, QtGui.QApplication.UnicodeUTF8))

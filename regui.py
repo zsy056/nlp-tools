@@ -28,9 +28,16 @@ class ReGui(QMainWindow, Ui_MainWindow):
         self.show()
 
     def __init_table(self):
-        self.tableWidget.setColumnCount(3)
-        self.tableWidget.setHorizontalHeaderLabels(
-                ['ID', 'Sentence', 'Dependency'])
+        hor_labels = ['ID', 'Sentence', 'Dependency']
+        self.tw_eng.setColumnCount(3)
+        self.tw_eng.setHorizontalHeaderLabels(hor_labels)
+        self.tw_chn.setColumnCount(3)
+        self.tw_chn.setHorizontalHeaderLabels(hor_labels)
+        # Sync the scroll bar of the two table
+        sb_en = self.tw_eng.verticalScrollBar()
+        sb_cn = self.tw_chn.verticalScrollBar()
+        sb_en.valueChanged.connect(sb_cn.setValue)
+        sb_cn.valueChanged.connect(sb_en.setValue)
         
     def __init_slots(self):
         self.lineEdit.returnPressed.connect(self.__search)
@@ -67,18 +74,6 @@ class ReGui(QMainWindow, Ui_MainWindow):
         QMessageBox.information(self, 'About',
                 'zsy 2012\nzsy056@gmail.com')
 
-    def __get_sen_text(self, node):
-        it = node.itertext()
-        ret = ''
-        try:
-            while True:
-                s = next(it).replace('\n', '').replace('$', '').strip()
-                if s =='': continue
-                ret = ret + s + ' '
-        except StopIteration:
-            pass
-        return ret
-
     def __get_depen(self, node):
         ret = ''
         if node == None: return ret
@@ -95,16 +90,37 @@ class ReGui(QMainWindow, Ui_MainWindow):
                     + '-' + words[1].get('value') + ')' + ' | '
         return ret
 
+    def __set_tw_item(self, tw, sen, counter):
+        itemId = QTableWidgetItem(sen.get('id'))
+        itemId.setFlags(itemId.flags() & (~Qt.ItemIsEditable))
+        tw.setItem(counter-1, 0, itemId)
+        itemText = QTableWidgetItem(
+                find.get_sen_text(sen.find('ROOT')))
+        itemText.setFlags(itemText.flags() & (~Qt.ItemIsEditable))
+        tw.setItem(counter-1, 1, itemText)
+        itemDepend = QTableWidgetItem(
+                self.__get_depen(sen.find('Dependency')))
+        itemDepend.setFlags(
+                itemDepend.flags() & (~Qt.ItemIsEditable))
+        tw.setItem(counter-1, 2, itemDepend)
+        itemLabel = QTableWidgetItem(str(counter))
+        tw.setVerticalHeaderItem(counter-1, itemLabel)
 
     def __do_search(self, query):
         self.action_stop.setEnabled(True)
         self.change_status.emit('Search...')
         self.update_progress.emit(0)
+        if self.rbtn_eng.isChecked():
+            master_tw, slave_tw = self.tw_eng, self.tw_chn
+            master_sens, slave_sens = self.eng_sens, self.chn_sens
+        else:
+            master_tw, slave_tw = self.tw_chn, self.tw_eng
+            master_sens, slave_sens = self.chn_sens, self.eng_sens
         i = 0
         counter = 0;
-        length = len(self.sens)
+        length = len(master_sens)
         sel_sen = []
-        for sen in self.sens:
+        for sen in master_sens:
             if self.stopped:
                 self.change_status.emit('Stopped, found '
                         +str(counter)+' sentences')
@@ -116,24 +132,19 @@ class ReGui(QMainWindow, Ui_MainWindow):
                 sel_sen.append(sen)
             i = i + 1
             self.update_progress.emit(int(100*i/length))
-        self.tableWidget.setRowCount(counter)
+        master_tw.setRowCount(counter)
+        slave_tw.setRowCount(counter)
         self.change_status.emit('Ready, found '+str(counter)+' sentences')
         counter = 0
         for sen in sel_sen:
             counter = counter + 1
-            itemId = QTableWidgetItem(sen.get('id'))
-            itemId.setFlags(itemId.flags() & (~Qt.ItemIsEditable))
-            self.tableWidget.setItem(counter-1, 0, itemId)
-            itemText = QTableWidgetItem(
-                    self.__get_sen_text(sen.find('ROOT')))
-            itemText.setFlags(itemText.flags() & (~Qt.ItemIsEditable))
-            self.tableWidget.setItem(counter-1, 1, itemText)
-            itemDepend = QTableWidgetItem(
-                    self.__get_depen(sen.find('Dependency')))
-            itemDepend.setFlags(itemDepend.flags() & (~Qt.ItemIsEditable))
-            self.tableWidget.setItem(counter-1, 2, itemDepend)
-            itemLabel = QTableWidgetItem(str(counter))
-            self.tableWidget.setVerticalHeaderItem(counter-1, itemLabel)
+            # master
+            self.__set_tw_item(master_tw, sen, counter)
+            # slave
+            idx = int(sen.get('id'))-1
+            if idx < len(slave_sens):
+                self.__set_tw_item(slave_tw,
+                        slave_sens[idx], counter)
 
         self.action_stop.setEnabled(False)
 
@@ -147,23 +158,29 @@ class ReGui(QMainWindow, Ui_MainWindow):
         return None
 
     def __do_open(self):
-        filename = QFileDialog.getOpenFileName(self,
+        self.eng_filename = QFileDialog.getOpenFileName(self,
                 'Open English XML File', QDir.currentPath(),
                 'XML files (*.xml);; XML files(*.xml)')
-        if filename != '':
-            self.__load_file(filename)
+        if self.eng_filename != '':
+            self.chn_filename = QFileDialog.getOpenFileName(self,
+                    'Open Chinese XML File', QDir.currentPath(),
+                    'XML files (*.xml);; XML files(*.xml)')
+            if self.chn_filename != '': self.__load_files()
 
-    def parseFile(self, filename):
+    def __parseFile(self):
         self.change_status.emit('Loading files...')
+        self.update_progress.emit(10)
+        self.eng_sens = lxml.etree.parse(
+                self.eng_filename).findall('Sentence')
         self.update_progress.emit(50)
-        self.sens = lxml.etree.parse(filename).findall('Sentence')
+        self.chn_sens = lxml.etree.parse(
+                self.chn_filename).findall('Sentence')
         self.update_progress.emit(100)
         self.change_status.emit('Ready')
         self.file_ready.emit()
 
-
-    def __load_file(self, filename):
-        _thread.start_new_thread(self.parseFile, (filename,))
+    def __load_files(self):
+        _thread.start_new_thread(self.__parseFile, ())
 
     def __on_file_ready(self):
         self.action_search.setEnabled(True)
