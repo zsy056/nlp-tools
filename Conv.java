@@ -5,7 +5,9 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,10 +55,10 @@ class Depend {
 	 * @return
 	 */
 	public static List<Depend> getDepends(String sentInfo, int id) {
-		List<Depend> list = new ArrayList<>();
 		String[] lines = sentInfo.split("\n");
 		List<String> depStrings = new ArrayList<>();
 		List<String> poslist = new ArrayList<>();
+		List<String> wordList = new ArrayList<>();
 		Pattern wordPattern = Pattern.compile("[^\\(\\)]+");
 		for (String line : lines) {
 			if (line.length() <= 1) {
@@ -71,10 +73,11 @@ class Depend {
 					if (tmp.length <= 1)
 						continue;
 					poslist.add(tmp[0]);
+					wordList.add(tmp[1]);
 				}
 			}
 		}
-
+		Map<Integer, Depend> depMap = new HashMap<>();
 		for (String dep : depStrings) {
 			if (!dep.contains("("))
 				continue;
@@ -96,7 +99,15 @@ class Depend {
 			if (num2 - 1 >= poslist.size())
 				continue;
 			String pos2 = poslist.get(num2 - 1);
-			list.add(new Depend(id, word1, pos1, num1, word2, pos2, num2, type));
+			depMap.put(num2, new Depend(id, word1, pos1, num1, word2, pos2, num2, type));
+		}
+		List<Depend> list = new ArrayList<>();
+		for(int i=0; i<wordList.size(); ++i) {
+			Depend depend = depMap.get(i+1);
+			if(depend==null) {
+				depend = new Depend(id, "", "", 0, wordList.get(i), poslist.get(i), i+1, "");
+			}
+			list.add(depend);
 		}
 		return list;
 	}

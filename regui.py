@@ -72,7 +72,7 @@ class ReGui(QMainWindow, Ui_MainWindow):
 
     def __about(self):
         QMessageBox.information(self, 'About',
-                'zsy 2012\nzsy056@gmail.com')
+                'zsy 2012\n\nzsy056@gmail.com')
 
     def __get_depen(self, node):
         ret = ''
@@ -127,7 +127,7 @@ class ReGui(QMainWindow, Ui_MainWindow):
                 self.update_progress.emit(100)
                 self.stopped = False
                 return
-            if find.is_sel(sen, query):
+            if find.is_sel(sen, query, self.cbStrict.isChecked()):
                 counter = counter + 1
                 sel_sen.append(sen)
             i = i + 1
