@@ -6,7 +6,10 @@ import lxml.etree
 def find_node(node, tag, sel_nodes, path):
     if node == None: return
     if node.tag == tag:
-        path.append(node)
+        if path != None:
+            path.append(node)
+        else:
+            path = [node]
         sel_nodes.append(path)
     else:
         for c_node in list(node):
@@ -18,6 +21,7 @@ def find_in_first_child(node, tag, sel_nodes, path):
         if node.tag == tag: 
             path.append(node)
             sel_nodes.append(path)
+            break
         lst = list(node)
         if len(lst)>0: node = lst[0]
         else: break
@@ -40,7 +44,7 @@ def find_tag_strict(nodes, tag):
                 and t_node.tag!='ROOT':
             t_node = t_node.getparent()
             sib = t_node.getnext()
-        if sib==None and t_node.tag=='ROOT': continue
+        if sib==None or t_node.tag=='ROOT': continue
         #find_in_first_child(node, tag, ret_nodes)
         find_in_first_child(sib, tag, ret_nodes, node)
     return ret_nodes
@@ -70,7 +74,7 @@ def get_last_node(node, query, is_strict = True):
     query = query.replace(' ', '')
     qtags = query.split('+')
     f_nodes = []
-    find_node(node, qtags[0], f_nodes, [])
+    find_node(node, qtags[0], f_nodes, None)
     cnodes = []
     for qtag in qtags[1:]:
         cnodes = find_tag(f_nodes, qtag, is_strict)

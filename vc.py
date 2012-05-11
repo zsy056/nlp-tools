@@ -124,7 +124,10 @@ en_vt = {'EVtP1': ['V+DT'],
          'EVtN12': ['V+JJ+JJ+NN', 'V+JJ+JJ+NNS', 'V+DT+JJ+JJ+NN',
              'V+DT+JJ+JJ+NNS'],
          'EVtN13': ['V+DT+NN+IN+NN'],
-         'EVtN14': ['V+NNS', 'V+CD+NNS', 'V+CD+'],
+         'EVtN14': ['V+NNS', 'V+CD+NNS', 'V+CD+NNS+IN+PRP$',
+             'V+JJ+NNS', 'V+CD+JJ+NNS', 'V+CD+JJ+NNS+IN+PRP$',
+             'V+JJR+NNS', 'V+CD+JJR+NNS', 'V+CD+JJR+NNS+IN+PRP$',
+             'V+JJS+NNS', 'V+CD+JJS+NNS', 'V+CD+JJS+NNS+IN+PRP$'],
          'EVtN15': ['V+PRP$+NNS'],
          'EVtN16': ['V+PRP$+NN+CC+NN'],
          'EVtN17': ['V+DT+NN+JJ', 'V+DT+NNS+JJ',
@@ -172,7 +175,24 @@ en_vt = {'EVtP1': ['V+DT'],
                  'CD+NN+VB+VBN+IN+PRP$+NNS'],
          'EVtPA2': ['PRP+VBD+VBN+TO+VB'],
          'EVtPrep1': ['PRP+V+NN+TO+VB'],
-         'EVtPrep2': [''],
+         'EVtPrep2': ['V+PRP+NN+IN+NN', 'V+PRP+NN+IN+NNS',
+                 'V+PRP$+NN+IN+NN', 'V+PRP$+NN+IN+NNS',
+                 'V+PRP+NN+IN+DT+NN', 'V+PRP+NN+IN+DT+NNS',
+                 'V+PRP$+NN+IN+DT+NN', 'V+PRP$+NN+IN+DT+NNS',
+                 'V+PRP+NN+IN+CD+NN', 'V+PRP+NN+IN+CD+NNS',
+                 'V+PRP$+NN+IN+CD+NN', 'V+PRP$+NN+IN+CD+NNS',
+                 'V+PRP+NN+IN+DT+JJ+NN', 'V+PRP+NN+IN+DT+JJ+NNS',
+                 'V+PRP$+NN+IN+DT+JJ+NN', 'V+PRP$+NN+IN+DT+JJ+NNS',
+                 'V+PRP+NN+IN+CD+JJ+NN', 'V+PRP+NN+IN+CD+JJ+NNS',
+                 'V+PRP$+NN+IN+CD+JJ+NN', 'V+PRP$+NN+IN+CD+JJ+NNS',
+                 'V+PRP+NN+IN+DT+JJR+NN', 'V+PRP+NN+IN+DT+JJR+NNS',
+                 'V+PRP$+NN+IN+DT+JJR+NN', 'V+PRP$+NN+IN+DT+JJR+NNS',
+                 'V+PRP+NN+IN+CD+JJR+NN', 'V+PRP+NN+IN+CD+JJR+NNS',
+                 'V+PRP$+NN+IN+CD+JJR+NN', 'V+PRP$+NN+IN+CD+JJR+NNS',
+                 'V+PRP+NN+IN+DT+JJS+NN', 'V+PRP+NN+IN+DT+JJS+NNS',
+                 'V+PRP$+NN+IN+DT+JJS+NN', 'V+PRP$+NN+IN+DT+JJS+NNS',
+                 'V+PRP+NN+IN+CD+JJS+NN', 'V+PRP+NN+IN+CD+JJS+NNS',
+                 'V+PRP$+NN+IN+CD+JJS+NN', 'V+PRP$+NN+IN+CD+JJS+NNS'],
          'EVtPrep3': ['V+PRP+IN+VBG+NN'],
          'EVtPrep4': ['V+PRP+IN+PRP$+JJ+NN', 'V+PRP+IN+PRP$+JJ+NNS'],
          'EVtPrep5': ['V+DT+IN+DT'],
@@ -608,66 +628,66 @@ cn_dvt = {'CDVtN1': ['V+PN+NN', 'V+NR+NN', 'V+PN+NN', 'V+DT+NN',
               'V+NR+M+NN+V+DT+M+NN+CD+M+NN',
               'V+DT+M+NN+V+DT+M+NN+CD+M+NN',
               'V+CD+M+NN+V+DT+M+NN+CD+M+NN'],
-          'CDVtPrep3': ['V+PN+NN+LB+PN+NN', 'V+PN+NN+LB+NR+NN',
-              'V+PN+NN+LB+DT+NN', 'V+PN+NN+LB+CD+NN',
-              'V+NR+NN+LB+PN+NN',
-              'V+NR+NN+LB+NR+NN', 'V+NR+NN+LB+DT+NN',
-              'V+NR+NN+LB+CD+NN',
-              'V+DT+NN+LB+PN+NN', 'V+DT+NN+LB+NR+NN',
-              'V+DT+NN+LB+DT+NN',
-              'V+DT+NN+LB+CD+NN', 'V+CD+NN+LB+PN+NN',
-              'V+CD+NN+LB+NR+NN',
-              'V+CD+NN+LB+DT+NN', 'V+CD+NN+LB+CD+NN',
-              'V+PN+M+NN+LB+PN+NN', 'V+PN+M+NN+LB+NR+NN',
-              'V+PN+M+NN+LB+DT+NN', 'V+PN+M+NN+LB+CD+NN',
-              'V+NR+M+NN+LB+PN+NN',
-              'V+NR+M+NN+LB+NR+NN', 'V+NR+M+NN+LB+DT+NN',
-              'V+NR+M+NN+LB+CD+NN',
-              'V+DT+M+NN+LB+PN+NN', 'V+DT+M+NN+LB+NR+NN',
-              'V+DT+M+NN+LB+DT+NN',
-              'V+DT+M+NN+LB+CD+NN', 'V+CD+M+NN+LB+PN+NN',
-              'V+CD+M+NN+LB+NR+NN',
-              'V+CD+M+NN+LB+DT+NN', 'V+CD+M+NN+LB+CD+NN',
-              'V+PN+NN+LB+PN+M+NN', 'V+PN+NN+LB+NR+M+NN',
-              'V+PN+NN+LB+DT+M+NN', 'V+PN+NN+LB+CD+M+NN',
-              'V+NR+NN+LB+PN+M+NN',
-              'V+NR+NN+LB+NR+M+NN', 'V+NR+NN+LB+DT+M+NN',
-              'V+NR+NN+LB+CD+M+NN',
-              'V+DT+NN+LB+PN+M+NN', 'V+DT+NN+LB+NR+M+NN',
-              'V+DT+NN+LB+DT+M+NN',
-              'V+DT+NN+LB+CD+M+NN', 'V+CD+NN+LB+PN+M+NN',
-              'V+CD+NN+LB+NR+M+NN',
-              'V+CD+NN+LB+DT+M+NN', 'V+CD+NN+LB+CD+M+NN',
-              'V+PN+M+NN+LB+PN+M+NN', 'V+PN+M+NN+LB+NR+M+NN',
-              'V+PN+M+NN+LB+DT+M+NN', 'V+PN+M+NN+LB+CD+M+NN',
-              'V+NR+M+NN+LB+PN+M+NN',
-              'V+NR+M+NN+LB+NR+M+NN', 'V+NR+M+NN+LB+DT+M+NN',
-              'V+NR+M+NN+LB+CD+M+NN',
-              'V+DT+M+NN+LB+PN+M+NN', 'V+DT+M+NN+LB+NR+M+NN',
-              'V+DT+M+NN+LB+DT+M+NN',
-              'V+DT+M+NN+LB+CD+M+NN', 'V+CD+M+NN+LB+PN+M+NN',
-              'V+CD+M+NN+LB+NR+M+NN',
-              'V+CD+M+NN+LB+DT+M+NN', 'V+CD+M+NN+LB+CD+M+NN'],
-          'CDVtPrep4': ['V+LB+PN+NN+DT+NN', 'V+LB+NR+NN+DT+NN',
-              'V+LB+DT+NN+DT+NN', 'V+LB+CD+NN+DT+NN',
-              'V+LB+PN+NN+CD+NN',
-              'V+LB+NR+NN+CD+NN', 'V+LB+DT+NN+CD+NN',
-              'V+LB+CD+NN+CD+NN',
-              'V+LB+PN+M+NN+DT+NN', 'V+LB+NR+M+NN+DT+NN',
-              'V+LB+DT+M+NN+DT+NN', 'V+LB+CD+M+NN+DT+NN',
-              'V+LB+PN+M+NN+CD+NN',
-              'V+LB+NR+M+NN+CD+NN', 'V+LB+DT+M+NN+CD+NN',
-              'V+LB+CD+M+NN+CD+NN',
-              'V+LB+PN+M+NN+DT+M+NN', 'V+LB+NR+M+NN+DT+M+NN',
-              'V+LB+DT+M+NN+DT+M+NN', 'V+LB+CD+M+NN+DT+M+NN',
-              'V+LB+PN+M+NN+CD+M+NN',
-              'V+LB+NR+M+NN+CD+M+NN', 'V+LB+DT+M+NN+CD+M+NN',
-              'V+LB+CD+M+NN+CD+M+NN',
-              'V+LB+PN+M+NN+DT+M+NN', 'V+LB+NR+M+NN+DT+M+NN',
-              'V+LB+DT+M+NN+DT+M+NN', 'V+LB+CD+M+NN+DT+M+NN',
-              'V+LB+PN+M+NN+CD+M+NN',
-              'V+LB+NR+M+NN+CD+M+NN', 'V+LB+DT+M+NN+CD+M+NN',
-              'V+LB+CD+M+NN+CD+M+NN'],
+          #'CDVtPrep3': ['V+PN+NN+LB+PN+NN', 'V+PN+NN+LB+NR+NN',
+          #    'V+PN+NN+LB+DT+NN', 'V+PN+NN+LB+CD+NN',
+          #    'V+NR+NN+LB+PN+NN',
+          #    'V+NR+NN+LB+NR+NN', 'V+NR+NN+LB+DT+NN',
+          #    'V+NR+NN+LB+CD+NN',
+          #    'V+DT+NN+LB+PN+NN', 'V+DT+NN+LB+NR+NN',
+          #    'V+DT+NN+LB+DT+NN',
+          #    'V+DT+NN+LB+CD+NN', 'V+CD+NN+LB+PN+NN',
+          #    'V+CD+NN+LB+NR+NN',
+          #    'V+CD+NN+LB+DT+NN', 'V+CD+NN+LB+CD+NN',
+          #    'V+PN+M+NN+LB+PN+NN', 'V+PN+M+NN+LB+NR+NN',
+          #    'V+PN+M+NN+LB+DT+NN', 'V+PN+M+NN+LB+CD+NN',
+          #    'V+NR+M+NN+LB+PN+NN',
+          #    'V+NR+M+NN+LB+NR+NN', 'V+NR+M+NN+LB+DT+NN',
+          #    'V+NR+M+NN+LB+CD+NN',
+          #    'V+DT+M+NN+LB+PN+NN', 'V+DT+M+NN+LB+NR+NN',
+          #    'V+DT+M+NN+LB+DT+NN',
+          #    'V+DT+M+NN+LB+CD+NN', 'V+CD+M+NN+LB+PN+NN',
+          #    'V+CD+M+NN+LB+NR+NN',
+          #    'V+CD+M+NN+LB+DT+NN', 'V+CD+M+NN+LB+CD+NN',
+          #    'V+PN+NN+LB+PN+M+NN', 'V+PN+NN+LB+NR+M+NN',
+          #    'V+PN+NN+LB+DT+M+NN', 'V+PN+NN+LB+CD+M+NN',
+          #    'V+NR+NN+LB+PN+M+NN',
+          #    'V+NR+NN+LB+NR+M+NN', 'V+NR+NN+LB+DT+M+NN',
+          #    'V+NR+NN+LB+CD+M+NN',
+          #    'V+DT+NN+LB+PN+M+NN', 'V+DT+NN+LB+NR+M+NN',
+          #    'V+DT+NN+LB+DT+M+NN',
+          #    'V+DT+NN+LB+CD+M+NN', 'V+CD+NN+LB+PN+M+NN',
+          #    'V+CD+NN+LB+NR+M+NN',
+          #    'V+CD+NN+LB+DT+M+NN', 'V+CD+NN+LB+CD+M+NN',
+          #    'V+PN+M+NN+LB+PN+M+NN', 'V+PN+M+NN+LB+NR+M+NN',
+          #    'V+PN+M+NN+LB+DT+M+NN', 'V+PN+M+NN+LB+CD+M+NN',
+          #    'V+NR+M+NN+LB+PN+M+NN',
+          #    'V+NR+M+NN+LB+NR+M+NN', 'V+NR+M+NN+LB+DT+M+NN',
+          #    'V+NR+M+NN+LB+CD+M+NN',
+          #    'V+DT+M+NN+LB+PN+M+NN', 'V+DT+M+NN+LB+NR+M+NN',
+          #    'V+DT+M+NN+LB+DT+M+NN',
+          #   'V+DT+M+NN+LB+CD+M+NN', 'V+CD+M+NN+LB+PN+M+NN',
+          #    'V+CD+M+NN+LB+NR+M+NN',
+          #    'V+CD+M+NN+LB+DT+M+NN', 'V+CD+M+NN+LB+CD+M+NN'],
+          #'CDVtPrep4': ['V+LB+PN+NN+DT+NN', 'V+LB+NR+NN+DT+NN',
+          #    'V+LB+DT+NN+DT+NN', 'V+LB+CD+NN+DT+NN',
+          #    'V+LB+PN+NN+CD+NN',
+          #    'V+LB+NR+NN+CD+NN', 'V+LB+DT+NN+CD+NN',
+          #    'V+LB+CD+NN+CD+NN',
+          #    'V+LB+PN+M+NN+DT+NN', 'V+LB+NR+M+NN+DT+NN',
+          #    'V+LB+DT+M+NN+DT+NN', 'V+LB+CD+M+NN+DT+NN',
+          #    'V+LB+PN+M+NN+CD+NN',
+          #    'V+LB+NR+M+NN+CD+NN', 'V+LB+DT+M+NN+CD+NN',
+          #    'V+LB+CD+M+NN+CD+NN',
+          #    'V+LB+PN+M+NN+DT+M+NN', 'V+LB+NR+M+NN+DT+M+NN',
+          #    'V+LB+DT+M+NN+DT+M+NN', 'V+LB+CD+M+NN+DT+M+NN',
+          #    'V+LB+PN+M+NN+CD+M+NN',
+          #    'V+LB+NR+M+NN+CD+M+NN', 'V+LB+DT+M+NN+CD+M+NN',
+          #    'V+LB+CD+M+NN+CD+M+NN',
+          #    'V+LB+PN+M+NN+DT+M+NN', 'V+LB+NR+M+NN+DT+M+NN',
+          #    'V+LB+DT+M+NN+DT+M+NN', 'V+LB+CD+M+NN+DT+M+NN',
+          #    'V+LB+PN+M+NN+CD+M+NN',
+          #    'V+LB+NR+M+NN+CD+M+NN', 'V+LB+DT+M+NN+CD+M+NN',
+          #    'V+LB+CD+M+NN+CD+M+NN'],
           'CDVtPrep5': ['BA+PN+NN+V+LB+DT+NN', 'BA+NR+NN+V+LB+DT+NN',
               'BA+DT+NN+V+LB+DT+NN', 'BA+CD+NN+V+LB+DT+NN',
               'BA+PN+M+NN+V+LB+DT+NN', 'BA+NR+M+NN+V+LB+DT+NN',
@@ -722,38 +742,59 @@ en_dvt = {'EDVtN1': ['V+DT+NN', 'V+CD+NN', 'V+PRP$+NN',
           'EDVtC3': ['V+N+WRB'],
           'EDVtC4': ['V+PRP+PRP+V', 'V+PRP+NN+V', 'V+PRP+NNS+V']}
             
+
 def conv(sens, v_list, rule_dict):
+    wcount = 0
+    i = 0
     for sen in sens:
+        print(i)
+        i = i + 1
         for key in rule_dict:
             rules = rule_dict[key]
             for rule in rules:
+                rule = '+' + rule + '+'
+                tmp = rule.split('+')[1:-1]
                 for tag in v_list:
-                    idx = rule.split('+').index('V')
-                    query = rule.replace('+V+', '+'+tag+'+')
                     try:
+                        idx = tmp.index('V') - len(tmp)
+                        query = rule.replace('+V+', '+'+tag+'+')[1:-1]
                         paths = find.get_last_node(sen, query)
                         if paths == None: continue
                         for path in paths:
+                            #print(len(path)-len(query.split('+')))
+                            print(query)
+                            print('+'.join([no.tag for no in path]))
+                            print(path[idx].tag)
+                            assert path[idx].tag == tag
                             if path[idx].tag == tag:
                                 path[idx].tag = key
                                 print('change')
+                            else:
+                                wcount += 1
+                                print('warning')
                     except ValueError:
                         pass
+    return wcount
                     
 
 if __name__=='__main__':
+    ccount = 0
     cn_xml = lxml.etree.parse('Result-c.xml')
     cn_sens = cn_xml.findall('Sentence')
-    conv(cn_sens, cn_v, cn_vt)
-    conv(cn_sens, cn_v, cn_vi)
-    conv(cn_sens, cn_v, cn_dvt)
+    ccount += conv(cn_sens, cn_v, cn_vt)
+    ccount += conv(cn_sens, cn_v, cn_vi)
+    ccount += conv(cn_sens, cn_v, cn_dvt)
     cn_xml.write('New-c.xml', encoding='utf8')
     
+    ecount = 0
     en_xml = lxml.etree.parse('Result-e.xml')
     en_sens = en_xml.findall('Sentence')
-    conv(en_sens, en_v, en_vt)
-    conv(en_sens, en_v, en_vi)
-    conv(en_sens, en_v, en_dvt)
+    ecount += conv(en_sens, en_v, en_vt)
+    ecount += conv(en_sens, en_v, en_vi)
+    ecount += conv(en_sens, en_v, en_dvt)
     en_xml.write('New-e.xml', encoding='utf8')
+
+    print('C warnings: '+str(ccount))
+    print('E warnings: '+str(ecount))
 
 
