@@ -14,6 +14,22 @@ def rm_space(text):
             ret_str += char
     return ret_str
 
+# Remove meta data in <>
+def rm_metadata(text):
+    ret_str = ''
+    in_meta = False
+    for char in text:
+        if not in_meta:
+            if char == '<':
+                in_meta = True
+            else:
+                ret_str += char
+        else:
+            if char == '>':
+                in_meta = False
+
+    return ret_str
+
 # Segment sentences from text
 def seg_sen(text):
     sen_lst = []
@@ -55,7 +71,7 @@ def main(argv):
         sys.stderr.write('Usage:\nch-sen-seg filepath encoding\n')
         exit(1)
     text = get_text(argv[1], argv[2]) 
-    sen_lst = seg_sen(rm_space(text))
+    sen_lst = seg_sen(rm_metadata(rm_space(text)))
     
     for sen in sen_lst:
         print(sen)
