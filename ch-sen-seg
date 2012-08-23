@@ -49,6 +49,8 @@ def seg_sen(text):
                 buf_str = char
             continue
         buf_str += char
+    # Collect the rest of text
+    sen_lst.append(buf_str)
 
     return sen_lst
 

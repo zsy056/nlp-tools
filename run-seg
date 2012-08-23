@@ -1,0 +1,39 @@
+#!/usr/bin/env python
+# Segment all the .txt files under the dst dir.
+
+import sys
+import os
+from string import Template
+
+cmd = Template('$sen_seg_cmd "$input" $encoding > "$output"')
+SEN_SEG_CMD = './ch-sen-seg'
+ENCOD1 = 'utf8'
+ENCOD2 = 'GBK'
+
+def main(argv):
+    if len(argv) != 2:
+        sys.stderr.write('Usage:\nrun-seg dst-dir\n')
+        exit(1)
+    failed_lst = []
+    for root, dirs, files in os.walk(argv[1]):
+        for name in files:
+            if name.endswith('.txt'):
+                fullpath = os.path.join(root, name)
+                cmd_str = cmd.substitute(sen_seg_cmd=SEN_SEG_CMD,
+                        input=fullpath, output=fullpath+'.sen',
+                        encoding=ENCOD1)
+                print('Running '+cmd_str+' using '+ENCOD1)
+                if os.system(cmd_str) != 0:
+                    print('Fallback to '+ENCOD2)
+                    cmd_str = cmd.substitute(sen_seg_cmd=SEN_SEG_CMD,
+                        input=fullpath, output=fullpath+'.sen',
+                        encoding=ENCOD2)
+                    if os.system(cmd_str) != 0:
+                        print('Fallback failed')
+                        failed_lst.append(fullpath)
+    print('Following files are failed!')
+    for files in failed_lst:
+        print(files)
+
+if __name__ == '__main__':
+    main(sys.argv)
