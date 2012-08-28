@@ -1,2 +1,22 @@
 #!/usr/bin/env python
 # Strip useless infomation in QQ corpus
+
+import sys
+import re
+
+def strip(filepath, user_encoding):
+    text = open(filepath, 'r', encoding=user_encoding).read()
+    pattern = re.compile('回复.*?\d\d:\d\d:\d\d', re.DOTALL)
+    # Break lines
+    lines = pattern.split(text)
+    for line in lines:
+        print(line)
+
+def main(argv):
+    if len(argv) != 3:
+        print('Usage:\nstrip-qq filepath encoding', file=sys.stderr)
+        exit(1)
+    strip(argv[1], argv[2])
+
+if __name__ == '__main__':
+    main(sys.argv)

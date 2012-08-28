@@ -3,8 +3,8 @@
 
 import sys
 
-senends = ['。', '！', '？', '…', '.', '~', '～', '!', '?'] 
-endfollow = ['\'', '"', '”', '’']
+senends = ['。', '！', '？', '…', '~', '～', '!', '?', '.', '．'] 
+endfollow = ['\'', '"', '”', '’', '.']
 
 # Remove spaces in text
 def rm_space(text):
@@ -70,7 +70,7 @@ def get_text(filepath, user_encoding):
 
 def main(argv):
     if len(argv) != 3:
-        sys.stderr.write('Usage:\nch-sen-seg filepath encoding\n')
+        print('Usage:\nch-sen-seg filepath encoding', file=sys.stderr)
         exit(1)
     text = get_text(argv[1], argv[2]) 
     sen_lst = seg_sen(rm_metadata(rm_space(text)))

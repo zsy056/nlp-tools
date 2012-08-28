@@ -12,7 +12,7 @@ ENCOD2 = 'GBK'
 
 def main(argv):
     if len(argv) != 2:
-        sys.stderr.write('Usage:\nrun-seg dst-dir\n')
+        print('Usage:\nrun-seg dst-dir', file=sys.stderr)
         exit(1)
     failed_lst = []
     for root, dirs, files in os.walk(argv[1]):
