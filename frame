@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+require 'set'
+
+module Frame
+
+    ICT_PUNC = Set[:w, :wkz, :wky, :wyz, :wyy, :wj, :ww, :wt, :wd,
+        :wf, :wn, :wm, :ws, :wp, :wb, :wh]
+    
+    ICT_N = Set[:n, :nr, :nr1, :nr2, :nrj, :nrf, :ns, :nsf, :nt,
+        :nz, :nl, :ng]
+
+    ICT_T = Set[:t, :tg]
+
+    ICT_S = Set[:s]
+
+    ICT_V = Set[:v, :vd, :vn, :vshi, :vyou, :vf, :vx, :vi, :vl,
+        :vg]
+
+    ICT_A = Set[:a, :ad, :an, :ag, :al]
+
+    ICT_B = Set[:b, :bl]
+
+    ICT_Z = Set[:z]
+
+    ICT_R = Set[:r, :rr, :rz, :rzt, :rzs, :rzv, :ry, :ryt, :rys, :ryy, :rg]
+
+    ICT_M = Set[:m, :mq]
+
+    ICT_Q = Set[:q, :qv, :qt]
+
+    ICT_D = Set[:d]
+
+    ICT_F = Set[:f]
+
+    ICT_P = Set[:p, :pba, :pbei]
+
+    ICT_C = Set[:c, :cc]
+
+    ICT_U = Set[:u, :uzhe, :ule, :uguo, :ude1, :ude2, :ude3, :usuo, :udeng,
+        :uyy, :udh, :uls, :uzhi, :ulian]
+
+    ICT_E = Set[:e]
+
+    ICT_Y = Set[:y]
+
+    ICT_O = Set[:o]
+
+    ICT_NOTION = ICT_N | ICT_T | ICT_S | ICT_V | ICT_A | ICT_B | ICT_Z |
+        ICT_R | ICT_M | ICT_Q | ICT_D
+
+    ICT_FUNC = ICT_F | ICT_P | ICT_C | ICT_U | ICT_E | ICT_Y | ICT_O
+
+
+end
