@@ -50,5 +50,100 @@ module Frame
 
     ICT_FUNC = ICT_F | ICT_P | ICT_C | ICT_U | ICT_E | ICT_Y | ICT_O
 
+    FILE_TYPE = '.out'
+    POS_SEP = '/'
 
+    FRAME_SCH = Set['----', '-*--', '--*-']
+
+    FRAME_THS_PER_M = 40
+
+    class Word
+
+        def initialize(text)
+            tmp = text.split(POS_SEP)
+            @word = tmp[0]
+            if tmp[1]
+                @tag = tmp[1].to_sym
+            else
+                @tag = :UNKNOWN
+            end
+        end
+
+        def is_func?
+            return ICT_FUNC.member? @tag
+        end
+
+        def is_notion?
+            return ICT_NOTION.member? @tag
+        end
+
+        def is_punc?
+            return ICT_PUNC.member? @tag
+        end
+
+    end
+
+    # Input: array of word
+    # Output: array of array of words,
+    # each array of words is a sub sentence, without punction
+    def self.get_sub_sen(words)
+        ret = []
+        tmp = []
+        for word in words do
+            if word.is_punc?
+                if tmp.empty?
+                    ret << tmp
+                    tmp.clear
+                end
+            else
+                tmp << word
+            end
+        end
+        return ret
+    end
+
+    def self.get_words(itext)
+        texts = itext.split /\s/
+        texts = texts.select { |text| not text.empty? }
+        return texts.collect { |text| Word.new text }
+    end
+
+    class Frame
+         def get_frames(text)
+             subsen = get_sub_sen get_words text
+
+         end
+    end
+
+    def self.read_corpus(dir)
+        ret = ''
+        Dir.glob("#{dir}/*").each_with_object({}) do |f, h|
+            if File.file? f and File.basename(f).end_with? FILE_TYPE
+                ret += IO.read f
+            elsif File.directory? f
+                ret += read_corpus f
+            end
+        end
+        return ret
+    end
+
+    def self.count_sep(text)
+        return text.count POS_SEP
+    end
+
+    def self.count_punc(text)
+        ret = ICT_PUNC.inject(0) do |ret, punc|
+            ret += text.scan(punc.to_s).length
+        end
+        return ret
+    end
+
+    def self.count_words(text)
+        return (count_sep text) - (count_punc text) 
+    end
+
+end
+
+if __FILE__ == $0
+    puts Frame::count_words(Frame::read_corpus ARGV[0])
 end

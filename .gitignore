@@ -1,5 +1,8 @@
 # Ignore corpus
 *.xml
 
+# Ignore tmp file
+*.swp
+
 # Ignore cache
 /__pycache__/*
