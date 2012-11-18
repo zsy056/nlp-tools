@@ -51,13 +51,24 @@ module Frame
     ICT_FUNC = ICT_F | ICT_P | ICT_C | ICT_U | ICT_E | ICT_Y | ICT_O
 
     FILE_TYPE = '.out'
-    POS_SEP = '/'
+    POS_SEP   = '/'
 
-    FRAME_SCH = Set['----', '-*--', '--*-']
+    NOTION = 0
+    FUNC   = 1
+    PUNC   = 2
 
-    FRAME_THS_PER_M = 40
+    FRAME_LENGTH = 3
+
+    #FRAME_SCH = [[FUNC, FUNC, FUNC, FUNC], [FUNC, NOTION, FUNC, FUNC],
+    #    [FUNC, FUNC, NOTION, FUNC]]
+    FRAME_SCH = [[FUNC, FUNC, FUNC], [FUNC, NOTION, FUNC]]
+    NOT_FRAME = -1
+
+    FRAME_THS = 40.0/1000000
 
     class Word
+
+        attr_reader :word
 
         def initialize(text)
             tmp = text.split(POS_SEP)
@@ -81,6 +92,10 @@ module Frame
             return ICT_PUNC.member? @tag
         end
 
+        def to_s
+            return @word
+        end
+
     end
 
     # Input: array of word
@@ -89,10 +104,10 @@ module Frame
     def self.get_sub_sen(words)
         ret = []
         tmp = []
-        for word in words do
+        words.each do |word|
             if word.is_punc?
-                if tmp.empty?
-                    ret << tmp
+                if not tmp.empty?
+                    ret << (Marshal::load Marshal::dump tmp)
                     tmp.clear
                 end
             else
@@ -104,15 +119,94 @@ module Frame
 
     def self.get_words(itext)
         texts = itext.split /\s/
-        texts = texts.select { |text| not text.empty? }
+        texts = texts.reject { |text| text.empty? }
         return texts.collect { |text| Word.new text }
     end
 
     class Frame
-         def get_frames(text)
-             subsen = get_sub_sen get_words text
 
-         end
+        attr_reader :words, :type, :opt, :frq
+
+        def initialize(words, type)
+            @words = words
+            @type = type
+            @opt = []
+            @frq = 1
+            FRAME_SCH[@type].each_with_index do |pos_type, index|
+                @opt << @words[index].word if pos_type == NOTION
+            end
+        end
+
+        def self.frame_type(words)
+            return NOT_FRAME if words.length != FRAME_LENGTH
+            FRAME_SCH.each_with_index do |sch, sindex|
+                flag = true
+                sch.each_with_index do |type, index|
+                    case type
+                    when NOTION then
+                        unless words[index].is_notion?
+                            flag = false
+                            break
+                        end
+                    when FUNC   then
+                        unless words[index].is_func?
+                            flag = false
+                            break
+                        end
+                    end
+                end
+                return sindex if flag 
+            end
+            return NOT_FRAME
+        end
+        
+        def to_sym
+            return to_s.to_sym
+        end
+
+        def to_s
+            ret = ''
+            FRAME_SCH[@type].each_with_index do |pos_type, index|
+                if pos_type == FUNC
+                    ret << @words[index].word
+                else
+                    ret << '*'
+                end
+                ret << ' '
+            end
+            return ret
+        end
+
+        def self.get_frames(text)
+            subsens = ::Frame::get_sub_sen ::Frame::get_words text
+            frames = []
+            # Get initial frames
+            subsens.each do |subsen|
+                tmp = []
+                subsen[0..-FRAME_LENGTH].each_with_index do |word, index|
+                    0.upto(FRAME_LENGTH-1) { |i| tmp << subsen[index+i] }
+                    type = frame_type tmp
+                    frames << Frame.new(tmp, type) if type != NOT_FRAME
+                end
+            end
+            # Merge frames
+            frame_hash = Hash.new(nil)
+            frames.each do |frame|
+                if frame_hash[frame.to_sym]
+                    frame_hash[frame.to_sym].merge frame
+                else
+                    frame_hash[frame.to_sym] = frame
+                end
+            end
+            # Select frame with frq more than threshold 
+            thres =  FRAME_THS * (::Frame::count_words text)
+            return frame_hash.select { |k, v| v.frq > thres } 
+        end
+
+        def merge(other_frame)
+            @opt.concat other_frame.opt
+            @frq += other_frame.frq
+        end
     end
 
     def self.read_corpus(dir)
@@ -145,5 +239,8 @@ module Frame
 end
 
 if __FILE__ == $0
-    puts Frame::count_words(Frame::read_corpus ARGV[0])
+    Frame::Frame::get_frames(Frame::read_corpus ARGV[0]).each do |k, frame|
+        puts "Frame: #{frame.to_s}, Frq: #{frame.frq}"
+        #puts frame.opt.to_s
+    end
 end

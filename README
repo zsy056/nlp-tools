@@ -3,3 +3,4 @@ NLP-TOOLS
 Includes:
 A corpus search tool
 A Chinese sentence segment tool
+A tool to extract `frames' from corpus
