@@ -53,22 +53,17 @@ module Frame
     FILE_TYPE = '.out'
     POS_SEP   = '/'
 
-    NOTION = 0
-    FUNC   = 1
-    PUNC   = 2
-
-    FRAME_LENGTH = 3
-
+    FILLER = ICT_NOTION
     #FRAME_SCH = [[FUNC, FUNC, FUNC, FUNC], [FUNC, NOTION, FUNC, FUNC],
     #    [FUNC, FUNC, NOTION, FUNC]]
-    FRAME_SCH = [[FUNC, FUNC, FUNC], [FUNC, NOTION, FUNC]]
-    NOT_FRAME = -1
+    FRAME_SCHS = [[ICT_FUNC, ICT_FUNC, ICT_FUNC], [ICT_FUNC, FILLER, ICT_FUNC]]
+
 
     FRAME_THS = 40.0/1000000
 
     class Word
 
-        attr_reader :word
+        attr_reader :word, :tag
 
         def initialize(text)
             tmp = text.split(POS_SEP)
@@ -78,14 +73,6 @@ module Frame
             else
                 @tag = :UNKNOWN
             end
-        end
-
-        def is_func?
-            return ICT_FUNC.member? @tag
-        end
-
-        def is_notion?
-            return ICT_NOTION.member? @tag
         end
 
         def is_punc?
@@ -98,76 +85,84 @@ module Frame
 
     end
 
-    # Input: array of word
-    # Output: array of array of words,
-    # each array of words is a sub sentence, without punction
-    def self.get_sub_sen(words)
-        ret = []
-        tmp = []
-        words.each do |word|
-            if word.is_punc?
-                if not tmp.empty?
-                    ret << (Marshal::load Marshal::dump tmp)
-                    tmp.clear
+    class CorpFile
+
+        attr_reader :filename
+        def initialize(filename)
+            @filename = filename
+            @text = IO.read filename
+        end
+
+        def words
+            return @words if @words
+            @words = (@text.split(/\s/).reject { |text| text.empty? })
+                .collect { |text| Word.new text }
+        end
+
+        # Output: array of array of words,
+        # each array of words is a sub sentence, without punction
+        def subsens
+            return @subsens if @subsens
+            @subsens = Array.new
+            tmp = Array.new
+            words.each do |word|
+                if word.is_punc?
+                    if not tmp.empty?
+                        @subsens << tmp
+                        tmp = Array.new
+                    end
+                else
+                    tmp << word
                 end
-            else
-                tmp << word
+            end
+            return @subsens
+        end
+
+        def sep_num
+            return @sep_num if @sep_num
+            @sep_num = @text.count POS_SEP
+        end
+
+        def punc_num
+            return @punc_num if @punc_num
+            @punc_num = ICT_PUNC.inject(0) do |ret, punc|
+                ret += @text.scan(punc.to_s).length
             end
         end
-        return ret
-    end
 
-    def self.get_words(itext)
-        texts = itext.split /\s/
-        texts = texts.reject { |text| text.empty? }
-        return texts.collect { |text| Word.new text }
     end
 
     class Frame
 
-        attr_reader :words, :type, :opt, :frq
+        attr_reader :words, :type, :ref, :frq
 
-        def initialize(words, type)
+        def initialize(words, type, filename)
             @words = words
             @type = type
-            @opt = []
+            @ref = Hash.new
+            @ref[filename] = Hash.new
             @frq = 1
-            FRAME_SCH[@type].each_with_index do |pos_type, index|
-                @opt << @words[index].word if pos_type == NOTION
+            FRAME_SCHS[@type].each_with_index do |pos_type, index|
+                @ref[filename][@words[index].word] = 1 if pos_type == FILLER
             end
         end
 
-        def self.frame_type(words)
-            return NOT_FRAME if words.length != FRAME_LENGTH
-            FRAME_SCH.each_with_index do |sch, sindex|
-                flag = true
-                sch.each_with_index do |type, index|
-                    case type
-                    when NOTION then
-                        unless words[index].is_notion?
-                            flag = false
-                            break
-                        end
-                    when FUNC   then
-                        unless words[index].is_func?
-                            flag = false
-                            break
-                        end
-                    end
-                end
-                return sindex if flag 
+        def self.is_frame?(words, framesch)
+            return false if words.length != framesch.length
+            framesch.each_with_index do |type, index|
+                return false unless type.include? words[index].tag
             end
-            return NOT_FRAME
+            return true
         end
         
         def to_sym
-            return to_s.to_sym
+            return name.to_sym
         end
 
-        def to_s
+        def name
             ret = ''
-            FRAME_SCH[@type].each_with_index do |pos_type, index|
-                if pos_type == FUNC
+            FRAME_SCHS[@type].each_with_index do |pos_type, index|
+                if pos_type != FILLER
                     ret << @words[index].word
                 else
                     ret << '*'
@@ -177,20 +172,22 @@ module Frame
             return ret
         end
 
-        def self.get_frames(text)
-            subsens = ::Frame::get_sub_sen ::Frame::get_words text
-            frames = []
-            # Get initial frames
-            subsens.each do |subsen|
-                tmp = []
-                subsen[0..-FRAME_LENGTH].each_with_index do |word, index|
-                    0.upto(FRAME_LENGTH-1) { |i| tmp << subsen[index+i] }
-                    type = frame_type tmp
-                    frames << Frame.new(tmp, type) if type != NOT_FRAME
+        def self.get_frames(corpfiles)
+            frames = Array.new
+            tmp = Array.new
+            corpfiles.each do |corpfile|
+                corpfile.subsens.each do |subsen|
+                    FRAME_SCHS.each_with_index do |framesch, findex|
+                        0.upto(subsen.length-framesch.length-1).each_with_index do |sindex|
+                            0.upto(framesch.length-1) { |i| tmp << subsen[sindex+i] }
+                            frames << Frame.new(tmp, findex, corpfile.filename) if is_frame? tmp, framesch 
+                            tmp = Array.new
+                        end
+                    end
                 end
             end
             # Merge frames
-            frame_hash = Hash.new(nil)
+            frame_hash = Hash.new nil
             frames.each do |frame|
                 if frame_hash[frame.to_sym]
                     frame_hash[frame.to_sym].merge frame
@@ -198,22 +195,33 @@ module Frame
                     frame_hash[frame.to_sym] = frame
                 end
             end
-            # Select frame with frq more than threshold 
-            thres =  FRAME_THS * (::Frame::count_words text)
-            return frame_hash.select { |k, v| v.frq > thres } 
+            return frame_hash
         end
 
         def merge(other_frame)
-            @opt.concat other_frame.opt
+            other_frame.ref.each do |filename, opts|
+                if @ref[filename]
+                    opts.each do |opt, frq|
+                        if @ref[filename][opt]
+                            @ref[filename][opt] += frq
+                        else
+                            @ref[filename][opt] = frq
+                        end
+                    end
+                else
+                    @ref[filename] = opts
+                end
+            end
             @frq += other_frame.frq
         end
+
     end
 
     def self.read_corpus(dir)
-        ret = ''
+        ret = Array.new
         Dir.glob("#{dir}/*").each_with_object({}) do |f, h|
             if File.file? f and File.basename(f).end_with? FILE_TYPE
-                ret += IO.read f
+                ret << (CorpFile.new f)
             elsif File.directory? f
                 ret += read_corpus f
             end
@@ -221,26 +229,18 @@ module Frame
         return ret
     end
 
-    def self.count_sep(text)
-        return text.count POS_SEP
-    end
-
-    def self.count_punc(text)
-        ret = ICT_PUNC.inject(0) do |ret, punc|
-            ret += text.scan(punc.to_s).length
-        end
-        return ret
-    end
-
-    def self.count_words(text)
-        return (count_sep text) - (count_punc text) 
-    end
-
 end
 
 if __FILE__ == $0
-    Frame::Frame::get_frames(Frame::read_corpus ARGV[0]).each do |k, frame|
-        puts "Frame: #{frame.to_s}, Frq: #{frame.frq}"
+    if ARGV.length != 1
+        exit
+    end
+    corpfiles = Frame::read_corpus ARGV[0]
+    #corpfiles.each do |corpfile|
+    #    puts "#{corpfile.filename} #{corpfile.subsens.length}"
+    #end
+    Frame::Frame::get_frames(corpfiles).each do |k, frame|
+        puts "Frame: #{k}, Frq: #{frame.frq}, in #{frame.ref.size} files"
         #puts frame.opt.to_s
     end
 end
