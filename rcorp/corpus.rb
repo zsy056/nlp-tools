@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'set'
 
-module Frame
+module Corpus
 
     ICT_PUNC = Set[:w, :wkz, :wky, :wyz, :wyy, :wj, :ww, :wt, :wd,
         :wf, :wn, :wm, :ws, :wp, :wb, :wh]
@@ -52,14 +52,6 @@ module Frame
 
     FILE_TYPE = '.out'
     POS_SEP   = '/'
-
-    FILLER = ICT_NOTION
-    #FRAME_SCH = [[FUNC, FUNC, FUNC, FUNC], [FUNC, NOTION, FUNC, FUNC],
-    #    [FUNC, FUNC, NOTION, FUNC]]
-    FRAME_SCHS = [[ICT_FUNC, ICT_FUNC, ICT_FUNC], [ICT_FUNC, FILLER, ICT_FUNC]]
-
-
-    FRAME_THS = 40.0/1000000
 
     class Word
 
@@ -118,21 +110,25 @@ module Frame
             return @subsens
         end
 
-        def sep_num
-            return @sep_num if @sep_num
-            @sep_num = @text.count POS_SEP
-        end
-
         def punc_num
             return @punc_num if @punc_num
-            @punc_num = ICT_PUNC.inject(0) do |ret, punc|
-                ret += @text.scan(punc.to_s).length
-            end
+            @punc_num = words.count { |word| ICT_PUNC.include? word.tag  }
+        end
+
+        def word_num
+            return @word_num if @word_num
+            @word_num = words.length - punc_num
         end
 
     end
 
     class Frame
+
+        @@filler = ICT_NOTION
+        #FRAME_SCH = [[FUNC, FUNC, FUNC, FUNC], [FUNC, NOTION, FUNC, FUNC],
+        #    [FUNC, FUNC, NOTION, FUNC]]
+        @@frame_schs = [[ICT_FUNC, ICT_FUNC, ICT_FUNC],
+            [ICT_FUNC, @@filler, ICT_FUNC]]
 
         attr_reader :words, :type, :ref, :frq
 
@@ -142,8 +138,8 @@ module Frame
             @ref = Hash.new
             @ref[filename] = Hash.new
             @frq = 1
-            FRAME_SCHS[@type].each_with_index do |pos_type, index|
-                @ref[filename][@words[index].word] = 1 if pos_type == FILLER
+            @@frame_schs[@type].each_with_index do |pos_type, index|
+                @ref[filename][@words[index].word] = 1 if pos_type == @@filler
             end
         end
 
@@ -161,8 +157,8 @@ module Frame
 
         def name
             ret = ''
-            FRAME_SCHS[@type].each_with_index do |pos_type, index|
-                if pos_type != FILLER
+            @@frame_schs[@type].each_with_index do |pos_type, index|
+                if pos_type != @@filler
                     ret << @words[index].word
                 else
                     ret << '*'
@@ -172,12 +168,14 @@ module Frame
             return ret
         end
 
-        def self.get_frames(corpfiles)
+        def self.get_frames(corpfiles, filler, frame_schs)
             frames = Array.new
             tmp = Array.new
+            @@filler = filler
+            @@frame_schs = frame_schs
             corpfiles.each do |corpfile|
                 corpfile.subsens.each do |subsen|
-                    FRAME_SCHS.each_with_index do |framesch, findex|
+                    @@frame_schs.each_with_index do |framesch, findex|
                         0.upto(subsen.length-framesch.length-1).each_with_index do |sindex|
                             0.upto(framesch.length-1) { |i| tmp << subsen[sindex+i] }
                             frames << Frame.new(tmp, findex, corpfile.filename) if is_frame? tmp, framesch 
@@ -231,16 +229,4 @@ module Frame
 
 end
 
-if __FILE__ == $0
-    if ARGV.length != 1
-        exit
-    end
-    corpfiles = Frame::read_corpus ARGV[0]
-    #corpfiles.each do |corpfile|
-    #    puts "#{corpfile.filename} #{corpfile.subsens.length}"
-    #end
-    Frame::Frame::get_frames(corpfiles).each do |k, frame|
-        puts "Frame: #{k}, Frq: #{frame.frq}, in #{frame.ref.size} files"
-        #puts frame.opt.to_s
-    end
-end
+
