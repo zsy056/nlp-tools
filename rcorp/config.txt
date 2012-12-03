@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+# -*- coding: utf-8 -*-
+
+# Corpus eg. INPUT = "C:\foo\分过词的口语语料"
+INPUT = "../../分过词的口语语料"
+
+# Output file eg. OUTPUT = "C:\foo\bar.txt"
+OUTPUT = "test.txt"
+
+# The POS of FILLER
+FILLER = Corpus::ICT_NOTION
+
+# FRAME structure
+FRAME_SCHS = [[Corpus::ICT_FUNC, Corpus::ICT_FUNC, Corpus::ICT_FUNC],
+              [Corpus::ICT_FUNC, FILLER, Corpus::ICT_FUNC]]
+
+# Frame frequence 
+FRAME_THS = 40.0/1000000
+
+# Frame occurence in file
+FILE_THS = 5
+
+# Special characters looking for
+SPEC_CHARS = Set['的', '了']
