@@ -6,15 +6,21 @@ import os
 from string import Template
 
 cmd = Template('$sen_seg_cmd "$input" $encoding > "$output"')
+cmd_seg = Template('$chseg_cmd "$input" "$output" "$dict"')
 SEN_SEG_CMD = './ch-sen-seg'
+CHSEG_CMD = './chseg'
 ENCOD1 = 'utf8'
 ENCOD2 = 'GBK'
 
 def main(argv):
-    if len(argv) != 2:
-        print('Usage:\nrun-seg dst-dir', file=sys.stderr)
+    if len(argv) < 2:
+        print('Usage:\nrun-seg dst-dir user_dict', file=sys.stderr)
         exit(1)
     failed_lst = []
+    chseg_failed_lst = []
+    userdict = ''
+    if argv == 3:
+        userdict = argv[2]
     for root, dirs, files in os.walk(argv[1]):
         for name in files:
             if name.endswith('.txt'):
@@ -27,12 +33,19 @@ def main(argv):
                     print('Fallback to '+ENCOD2)
                     cmd_str = cmd.substitute(sen_seg_cmd=SEN_SEG_CMD,
                         input=fullpath, output=fullpath+'.sen',
-                        encoding=ENCOD2)
+                        encoding=ENCOD1)
                     if os.system(cmd_str) != 0:
                         print('Fallback failed')
                         failed_lst.append(fullpath)
-    print('Following files are failed!')
+                    cmd_str = cmd_seg.substitute(chseg_cmd=CHSEG_CMD, input=fullpath+'.sen', output=fullpath+'.out', dict=userdict)
+                    if os.system(cmd_str) != 0:
+                        print('Faild chseg!')
+                        chseg_failed_lst.append(fullpath)
+    print('Following files are failed to seg sen!')
     for files in failed_lst:
+        print(files)
+    print('Following files are failed to chseg')
+    for files in chseg_failed_lst:
         print(files)
 
 if __name__ == '__main__':
