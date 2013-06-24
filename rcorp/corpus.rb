@@ -1,4 +1,5 @@
-#!/usr/bin/env ruby
+﻿#!/usr/bin/env ruby
+# -*- coding: utf-8 -*-
 require 'set'
 
 module Corpus
@@ -45,10 +46,11 @@ module Corpus
 
     ICT_O = Set[:o]
 
-    ICT_NOTION = ICT_N | ICT_T | ICT_S | ICT_V | ICT_A | ICT_B | ICT_Z |
-        ICT_R | ICT_M | ICT_Q | ICT_D
+    ICT_NOTION = ICT_N | ICT_T | ICT_S | ICT_A | ICT_B | ICT_Z |
+        ICT_R | ICT_M | ICT_Q | ICT_D 
 
-    ICT_FUNC = ICT_F | ICT_P | ICT_C | ICT_U | ICT_E | ICT_Y | ICT_O
+    ICT_FUNC = ICT_F | ICT_P | ICT_C | ICT_U | ICT_E | ICT_Y | ICT_O 
+	
 
     FILE_TYPE = '.out'
     POS_SEP   = '/'
@@ -82,7 +84,10 @@ module Corpus
         attr_reader :filename
         def initialize(filename)
             @filename = filename
-            @text = IO.read filename
+            f = File.open filename, encoding: Encoding::UTF_8
+            @text = f.read
+            #puts @text
+            #exit
         end
 
         def words
@@ -211,6 +216,13 @@ module Corpus
                 end
             end
             @frq += other_frame.frq
+        end
+
+        def has_char?(sepc_chars)
+            sepc_chars.each do |char|
+                return true if name.include? char
+            end
+            return false
         end
 
     end

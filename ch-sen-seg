@@ -1,10 +1,12 @@
 #!/usr/bin/env python
+# -*- coding: utf8 -*-
 # Get sentences from text
 
 import sys
 
 senends = ['。', '！', '？', '…', '~', '～', '!', '?', '.', '．'] 
 endfollow = ['\'', '"', '”', '’', '.']
+possible_encodings = ['utf8', 'gbk']
 
 # Remove spaces in text
 def rm_space(text):
@@ -55,28 +57,47 @@ def seg_sen(text):
     return sen_lst
 
 # Get text from file
-def get_text(filepath, user_encoding):
-    #return open(filepath, 'r', encoding=user_encoding).read()
+def get_text(filepath):
     txt_buf = ''
-    infile = open(filepath, 'r', encoding=user_encoding)
-    while True:
-        line = infile.readline()
-        if line == '': break
-        # Remove meta data
-        if line[0] == '<': continue
-        txt_buf += line
+    file = None
+    # test file encoding
+    for encoding in possible_encodings:
+        try:
+            file = open(filepath, 'r', encoding=encoding)
+            file.readlines()
+            file.seek(0)
+        except UnicodeDecodeError:
+            print('not encode in %s' % encoding)
+        else:
+            while True:
+                line = file.readline()
+                if line == '': break
+                # Remove meta data
+                if line[0] == '<': continue
+                txt_buf += line
+            # convert source to utf8 if necessary
+            if encoding != 'utf8':
+                file.seek(0)
+                contents = file.readlines()
+                file.close()
+                file = open(filepath, 'w', encoding='utf8')
+                print(''.join(contents), file=file)
+            file.close()
+             
     return txt_buf
         
 
 def main(argv):
     if len(argv) != 3:
-        print('Usage:\nch-sen-seg filepath encoding', file=sys.stderr)
+        print('Usage:\nch-sen-seg inputfile outputfile', file=sys.stderr)
         exit(1)
-    text = get_text(argv[1], argv[2]) 
+    inputfile = argv[1]
+    outputfile = argv[2]
+    text = get_text(inputfile) 
     sen_lst = seg_sen(rm_metadata(rm_space(text)))
-    
+    outf = open(outputfile, 'w', encoding='utf8')
     for sen in sen_lst:
-        print(sen)
+        print(sen, file=outf)
 
 if __name__ == '__main__':
     main(sys.argv)

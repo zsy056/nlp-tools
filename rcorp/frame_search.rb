@@ -1,17 +1,13 @@
 #!/usr/bin/env ruby
+# -*- coding: utf-8 -*-
 
 require_relative 'corpus'
 
-FILLER = Corpus::ICT_NOTION
-FRAME_SCHS = [[Corpus::ICT_FUNC, Corpus::ICT_FUNC, Corpus::ICT_FUNC],
-              [Corpus::ICT_FUNC, FILLER, Corpus::ICT_FUNC]]
-FRAME_THS = 40.0/1000000
+# Configs
+load 'config.txt'
 
 if __FILE__ == $0
-    if ARGV.length != 1
-        exit
-    end
-    corpfiles = Corpus::read_corpus ARGV[0]
+    corpfiles = Corpus::read_corpus INPUT
     words_num = 0
     corpfiles.each do |corpfile|
         words_num += corpfile.word_num
@@ -22,11 +18,16 @@ if __FILE__ == $0
     frames = Corpus::Frame::get_frames(corpfiles, FILLER, FRAME_SCHS)
     frames = frames.select { |k, frame| frame.ref.size > 5 }
     frames = frames.select { |k, frame| frame.frq >= FRAME_THS*words_num }
-    frames.each do |k, frame|
-        puts "Frame: #{k}, Frq: #{frame.frq}, in #{frame.ref.size} files"
-        #frame.ref.each do |file, opts|
-        #    puts "\tIn file #{file}:"
-        #    puts "\t\t#{opts}"
-        #end
+    frames = frames.select { |k, frame| frame.has_char? SPEC_CHARS } unless SPEC_CHARS.empty?
+    File.open(OUTPUT, 'w') do |f|
+        frames.each do |k, frame|
+            f.puts "Frame: #{k}, Frq: #{frame.frq}, in #{frame.ref.size} files"
+            frame.ref.each do |file, opts|
+                f.puts "\tIn file #{file}:"
+                opts.each do |opt, frq|
+                    f.puts "\t\tOPT: #{opt}, Frq: #{frq}"
+                end
+            end
+        end
     end
 end
