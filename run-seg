@@ -14,12 +14,12 @@ ENCOD2 = 'GBK'
 
 def main(argv):
     if len(argv) < 2:
-        print('Usage:\nrun-seg dst-dir user_dict', file=sys.stderr)
+        print('Usage:\nrun-seg dst-dir [user_dict]', file=sys.stderr)
         exit(1)
     failed_lst = []
     chseg_failed_lst = []
     userdict = ''
-    if argv == 3:
+    if len(argv) == 3:
         userdict = argv[2]
     for root, dirs, files in os.walk(argv[1]):
         for name in files:
