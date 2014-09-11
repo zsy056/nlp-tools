@@ -20,6 +20,7 @@ if __FILE__ == $0
     frames = frames.select { |k, frame| frame.frq >= FRAME_THS*words_num }
     frames = frames.select { |k, frame| frame.has_char? SPEC_CHARS } unless SPEC_CHARS.empty?
     File.open(OUTPUT, 'w') do |f|
+        f.puts "Found #{frames.size} frames."
         frames.each do |k, frame|
             f.puts "Frame: #{k}, Frq: #{frame.frq}, in #{frame.ref.size} files"
             frame.ref.each do |file, opts|
