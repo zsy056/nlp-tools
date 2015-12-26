@@ -1,0 +1,24 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+version = '1.0'
+
+mainClassName = 'Conv'
+
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.apache.poi:poi-ooxml:3.8'
+    compile 'org.apache.poi:poi-scratchpad:3.8'
+}
